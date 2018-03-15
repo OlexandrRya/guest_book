@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 use Validator;
 use Image;
+use File;
 use App\Http\Controllers\Controller;
 
 class PageController extends Controller
@@ -25,13 +26,13 @@ class PageController extends Controller
 
 	public function store(Request $request) {
 	
-		// $rules = ['captcha'=>'required|captcha'];
-		// $validator = Validator::make( $request->all(), $rules);
-		// if ( $validator->fails()) { 
+		$rules = ['captcha'=>'required|captcha'];
+		$validator = Validator::make( $request->all(), $rules);
+		if ( $validator->fails()) { 
 
-		// 	echo '<script>alert("Неправильный ввод капчи, повторите попытку.");</script>';
-		// 	return redirect('/');
-		// }
+			echo '<script>alert("Неправильный ввод капчи, повторите попытку.");</script>';
+			return redirect('/');
+		}
 
 		$articles = new Guest_book_table;
 		$articles->user_name = $request["user_name"];
@@ -57,6 +58,8 @@ class PageController extends Controller
 			$file = Image::make($file);
 			$file->resize(320, 240);
 			//move file from local storage
+			$path = public_path().'/file/';
+			File::makeDirectory($path, $mode = 0777, true, true);
 			$file->save(public_path().'/file/'.$articles->file);
             // $file->move(public_path() . '/file',$file->hashName());
         }
